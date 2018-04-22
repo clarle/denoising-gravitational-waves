@@ -78,3 +78,64 @@ y = np.sin(2 * np.pi * f * x / Fs)
 # plt.xlabel('sample(n)')
 # plt.ylabel('voltage(V)')
 # plt.show()
+
+#-------------------------------------------------------------------------------
+
+waves_clean = []
+waves_shifted_one = []
+waves_shifted_two = []
+waves_shifted_three = []
+
+time = np.linspace(0, 1, 11)    # Change the 11 to 8130 to get a intervals of 8129
+
+def myfunc(t):
+    return A * np.exp(-(np.square((t-F)-B))/(np.square(C))) * np.sin(D*t + E)
+
+vfunc = np.vectorize(myfunc)
+
+for x in range(0, 4):           # Change the 4 to 10,000 for 10,000 data sets
+    A = np.random.rand(1)
+    B = np.random.rand(1)
+    C = np.random.rand(1)
+    D = 100 + np.random.rand(1)
+    E = np.random.rand(1)
+    F = 0
+
+    for x in range(0, 4):   # 4 as 1 clean and 3 shifted
+
+        if (F == 0):
+            waves_clean.append(vfunc(time))
+        elif (F == 0.25):
+            waves_shifted_one.append(vfunc(time))
+        elif (F == 0.50):
+            waves_shifted_two.append(vfunc(time))
+        elif (F == 0.75):
+            waves_shifted_three.append(vfunc(time))
+
+        F += 0.25                # Should this be random as well?
+
+    F = 0
+
+# plt.plot(waves_clean, time)
+# plt.show()
+# print(waves_shifted_one)        # array of 4 arrays as data size is currently 4
+
+# print("Clean")
+# print(waves_clean)
+# print("Shifted #1")
+# print(waves_shifted_one)
+# print("Shifted #2")
+# print(waves_shifted_two)
+# print("Shifted #3")
+# print(waves_shifted_three)
+
+np.savetxt('waves_clean.txt', waves_clean, fmt='%.5e')
+np.savetxt('waves_shifted_one.txt', waves_shifted_one, fmt='%.5e')
+np.savetxt('waves_shifted_two.txt', waves_shifted_two, fmt='%.5e')
+np.savetxt('waves_shifted_three.txt', waves_shifted_three, fmt='%.5e')
+
+np.set_printoptions(precision = 17)
+data_clean = np.loadtxt("waves_clean.txt", dtype = np.float64)
+data_shifted_one = np.loadtxt("waves_shifted_one.txt", dtype = np.float64)
+data_shifted_two = np.loadtxt("waves_shifted_two.txt", dtype = np.float64)
+data_shifted_three = np.loadtxt("waves_shifted_three.txt", dtype = np.float64)
