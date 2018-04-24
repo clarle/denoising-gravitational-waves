@@ -139,3 +139,55 @@ data_clean = np.loadtxt("waves_clean.txt", dtype = np.float64)
 data_shifted_one = np.loadtxt("waves_shifted_one.txt", dtype = np.float64)
 data_shifted_two = np.loadtxt("waves_shifted_two.txt", dtype = np.float64)
 data_shifted_three = np.loadtxt("waves_shifted_three.txt", dtype = np.float64)
+
+batch_size = 2
+# print("---")
+# print(data_clean.shape)
+# print(data_shifted_one.shape)
+# print(data_shifted_two.shape)
+# print(data_shifted_three.shape)             # these 4 print out (4, 11)
+# print(data_clean[0:2].shape)
+# print(data_shifted_one[0:2].shape)
+# print(data_shifted_two[0:2].shape)
+# print(data_shifted_three[0:2].shape)        # these 4 print out (2, 11)
+
+# I could restructure the generation of waves to create a [11, 3] matrix for each clean
+# wave instead of three separate files, and create a larger array which holds all of
+# these arrays.
+# order of the axes shouldn't matter -- could try to figure out the dimensions for w and
+# b such that wX + b where x.shape = [3, 2, 11] gives me an output with shape [1, 2, 11]
+
+batch = array([data_shifted_one[0:batch_size], data_shifted_two[0:batch_size], data_shifted_three[0:batch_size]])
+# print(batch.shape)      # prints out (3, 2, 11) as 2 is batch_size
+# print(batch)
+# # print(batch[0][0].shape)
+batch = np.transpose(batch, (1, 2, 0))
+# print(batch.shape)      # prints out (2, 11, 3) where 2 is the batch_size
+# print(batch)
+
+# print(batch[0].shape)
+# print(batch[0][0].shape)
+#
+# print(batch.shape)
+# noised_batch = batch
+# print(noised_batch.shape)
+
+noisy_shifted_one = data_shifted_one
+noisy_shifted_two = data_shifted_two
+noisy_shifted_three = data_shifted_three
+
+for i in range(0, 4):       # 4 to be replaced by 10,000
+
+    for j in range(0, 11):  # 11 to be replaced by 8130
+
+        mu, sigma = 0, 1 # mean and standard deviation
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_one[i][j] += noise[0]
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_two[i][j] += noise[0]
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_three[i][j] += noise[0]
+        # add a random value, or should normal distribution be added?
+
+# print(noisy_shifted_one.shape)  # (4, 11) where 4 should be 10,000
+# print(noised_batch.shape)
