@@ -81,6 +81,41 @@ y = np.sin(2 * np.pi * f * x / Fs)
 
 #-------------------------------------------------------------------------------
 
+# f = Ae^(-((t-B)^2)/C^2) * sin(Dt + E)
+# fix A, B, C, D, and E
+# Create a loop which loops through 8000 values for t between 0 and 1 and
+# calculates the value f for each of these 8000 values
+# Shift the function by replacing t with (t - F) and calculate the value of
+# f for each the same 8000 values of t. Repeat this.
+# This should be stored in a matrix
+
+# NOT THE FOLLOWING
+# [
+#     [
+#         [1, 2, ... 8129]
+#         [1, 2, ... 8129]
+#         [1, 2, ... 8129]
+#     ],
+#     [
+#         [1, 2, ... 8129]
+#         [1, 2, ... 8129]
+#         [1, 2, ... 8129]
+#     ]
+# ]
+# THE FOLLOWING IS RIGHT
+# [
+#     [1, 2, ... 8129],   # Wave 1
+#     [1, 2, ... 8129],   # Wave 1 shifted
+#     [1, 2, ... 8129],   # Wave 1 shifted again
+#     [1, 2, ... 8129],   # Wave 2
+#     [1, 2, ... 8129],   # Wave 2 shifted
+#     [1, 2, ... 8129]    # Wave 2 shifted again
+# ]
+
+# np.array --> fill with 0s (np.zeroes) to set the dimension, and then fill
+# each corresponding value with the value of the function.
+# save this array in a txt file, then load batch by batch into the neural network
+
 waves_clean = []
 waves_shifted_one = []
 waves_shifted_two = []
@@ -191,3 +226,21 @@ for i in range(0, 4):       # 4 to be replaced by 10,000
 
 # print(noisy_shifted_one.shape)  # (4, 11) where 4 should be 10,000
 # print(noised_batch.shape)
+
+x = tf.placeholder(tf.float32, [None, 11, 3])   # None for variable batch_size
+W = tf.Variable(tf.random_normal([batch_size, 3, 1]))
+b = tf.Variable(tf.random_normal([1]))
+y = tf.matmul(x, W) + b
+# print(y)
+
+y_ = tf.placeholder(tf.int64, [batch_size, 11, 1]) # Label, i.e. Correct answer
+
+# May not be able to use this as this has something to do with Softmax, which
+# is only for creating an output of probabilities which add up to 1.
+cross_entropy = tf.losses.mean_squared_error(labels=y_, predictions=y)
+train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+
+sess = tf.InteractiveSession()
+tf.global_variables_initializer().run()
+
+# print(data_clean.shape)
