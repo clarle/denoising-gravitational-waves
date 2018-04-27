@@ -244,3 +244,24 @@ sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
 # print(data_clean.shape)
+
+epochs = 2
+for m in range(0, epochs):
+    min = 0
+    max = batch_size
+    for n in range(0, int(4/batch_size)):       # here the 4 will be replaced by 10,000
+        current_batch_x = array([noisy_shifted_one[min:max], noisy_shifted_two[min:max], noisy_shifted_three[min:max]])
+        batch_xs = np.transpose(current_batch_x, (1, 2, 0))
+        current_batch_y = data_clean[min:max]
+        batch_ys = current_batch_y[..., newaxis]    # to change (2, 11) to (2, 11, 1)
+        _, acc_train = sess.run([train_step, cross_entropy], feed_dict={x: batch_xs, y_: batch_ys})
+        # print(acc_train)
+        # when i = 1, [0:2], when i = 2, [2:4]
+        min += batch_size
+        max += batch_size
+        print("Epoch: " + str(m) + ", iteration: " + str(n))
+        print(sess.run(
+              cross_entropy, feed_dict={
+                  x: batch_xs,
+                  y_: batch_ys
+              }))
