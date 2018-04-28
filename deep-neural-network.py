@@ -265,3 +265,35 @@ for m in range(0, epochs):
                   x: batch_xs,
                   y_: batch_ys
               }))
+
+#-------------------------------------------------------------------------------
+
+  # Test trained model
+
+waves_clean_test = []
+waves_shifted_one_test = []
+waves_shifted_two_test = []
+waves_shifted_three_test = []
+
+for _ in range(0, 4):           # Change the 4 to 10,000 for 10,000 data sets
+     A = np.random.rand(1)
+     B = np.random.rand(1)
+     C = np.random.rand(1)
+     D = 100 + np.random.rand(1)
+     E = np.random.rand(1)
+     F = 0
+
+     for _ in range(0, 4):
+
+         if (F == 0):
+             waves_clean_test.append(vfunc(time))
+         elif (F == 0.25):
+             waves_shifted_one_test.append(vfunc(time))
+         elif (F == 0.50):
+             waves_shifted_two_test.append(vfunc(time))
+         elif (F == 0.75):
+             waves_shifted_three_test.append(vfunc(time))
+
+         F += 0.25                # Should this be random as well?
+
+     F = 0
