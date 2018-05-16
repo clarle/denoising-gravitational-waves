@@ -297,3 +297,58 @@ for _ in range(0, 4):           # Change the 4 to 10,000 for 10,000 data sets
          F += 0.25                # Should this be random as well?
 
      F = 0
+
+# batch_test = array([data_shifted_one_test, data_shifted_two_test, data_shifted_three_test])
+# print(batch.shape)      # prints out (3, 2, 11) as 2 is batch_size
+# print(batch)
+# # print(batch[0][0].shape)
+# batch_test_x = np.transpose(batch_test, (1, 2, 0))
+
+noisy_shifted_one_test = waves_shifted_one_test
+noisy_shifted_two_test = waves_shifted_two_test
+noisy_shifted_three_test = waves_shifted_three_test
+
+for i in range(0, 4):
+
+    for j in range(0, 11):
+
+        mu, sigma = 0, 1 # mean and standard deviation
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_one_test[i][j] += noise[0]
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_two_test[i][j] += noise[0]
+        noise = np.random.normal(mu, sigma, 1000)
+        noisy_shifted_three_test[i][j] += noise[0]
+
+batch_test = array([noisy_shifted_one_test, noisy_shifted_two_test, noisy_shifted_three_test])
+batch_test_x = np.transpose(batch_test, (1, 2, 0))
+
+np.savetxt('waves_clean_test.txt', waves_clean_test, fmt='%.5e')
+data_clean_test = np.loadtxt("waves_clean_test.txt", dtype = np.float64)
+
+# print(data_clean_test.shape)
+batch_ys = data_clean_test[..., newaxis]
+batch_ys = batch_ys[:batch_size, :, :]
+batch_test_x_new = batch_test_x[:batch_size, :, :]
+# print("-------------------------------------------------------------------")
+# print(batch_ys.shape)           # (2, 11, 1)
+# print(batch_test_x_new.shape)   # (2, 11, 3)
+# print(x.shape)
+# print(y_.shape)
+# print("-------------------------------------------------------------------")
+
+# print(y)
+# print("-------------------------------------------------------------------")
+float_y_ = tf.cast(y_, dtype=tf.float32)
+# print(float_y_)
+
+print(y.shape)
+print(y_.shape)
+
+correct_prediction = tf.equal(y, float_y_)
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+print(sess.run(
+      cross_entropy, feed_dict={
+          x: batch_test_x_new,
+          y_: batch_ys
+      }))
